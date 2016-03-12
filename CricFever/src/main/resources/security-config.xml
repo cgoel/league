@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+        http://www.springframework.org/schema/data/jpa 
+        http://www.springframework.org/schema/data/jpa/spring-jpa-1.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+        ">
+
+	<bean id="springSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+	    <security:filter-chain-map path-type="ant">
+	        <security:filter-chain pattern="/authenticate" filters="restFilter"/>
+	        <security:filter-chain pattern="/logout" filters="logoutFilter"/>
+	    </security:filter-chain-map>
+	</bean>
+	
+	<bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
+	    <property name="rolePrefix" value=""/>
+	</bean>
+	
+	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+	    <constructor-arg >
+	        <list>
+	            <ref bean="roleVoter"/>
+	        </list>
+	    </constructor-arg>
+	</bean>
+
+	<bean id="logoutFilter"
+		class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<constructor-arg index="0" value="/"/>
+	    <constructor-arg index="1">
+	        <list>
+	            <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+	            <bean id="myLogoutHandler" class="com.aqua.security.CustomLogoutHandlerFilter"/>
+	        </list>
+	    </constructor-arg>
+	</bean>
+
+	<bean id="customLogoutHandlerFilter" name="customLogoutHandlerFilter"
+		class="com.aqua.security.CustomLogoutHandlerFilter" />
+
+	<!-- Security Configuration -->
+	<security:http entry-point-ref="restAuthenticationEntryPoint" access-decision-manager-ref="accessDecisionManager">
+	    <security:intercept-url pattern="/authenticate" />
+		<security:custom-filter ref="restFilter" position="FORM_LOGIN_FILTER" />
+		<security:logout logout-url="/service/auth/logout"/>
+	</security:http>
+
+ 	<bean id="restFilter"
+		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		<property name="filterProcessesUrl" value="/service/auth/authenticate"></property>
+		<property name="passwordParameter" value="password"/>
+		<property name="usernameParameter" value="username"/>
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="authenticationSuccessHandler" ref="restSuccessHandler" />
+	</bean>
+	
+	<bean id="restSuccessHandler"
+		class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler" >
+		<property name="defaultTargetUrl" value="/service/auth/auth"/>
+	</bean>
+
+	<!-- Authentication manager. -->
+	<security:authentication-manager alias="authenticationManager">
+		<security:authentication-provider  user-service-ref="userService">
+			<security:password-encoder ref="passwordEncoder"/>
+		</security:authentication-provider>
+	</security:authentication-manager>
+	
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	
+	<security:global-method-security access-decision-manager-ref="accessDecisionManager"
+		secured-annotations="enabled" jsr250-annotations="enabled"
+		pre-post-annotations="enabled">
+	</security:global-method-security>
+	
+</beans>
+
