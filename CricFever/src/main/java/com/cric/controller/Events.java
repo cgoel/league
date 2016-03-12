@@ -1,16 +1,27 @@
 package com.cric.controller;
-import org.springframework.web.bind.annotation.PathVariable;  
-import org.springframework.web.bind.annotation.RequestMapping;  
-import org.springframework.web.bind.annotation.RequestMethod;  
-import org.springframework.web.bind.annotation.RestController;  
 
+import java.util.ArrayList;
+import java.util.List;
 
-@RestController  
-@RequestMapping("/events")  
-public class Events {  
- @RequestMapping(value = "/{name}", method = RequestMethod.GET)  
- public String hello(@PathVariable String name) {  
-  String result="Hello "+name;    
-  return result;  
- }  
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.cric.domain.Event;
+
+@RestController
+@RequestMapping("/events")
+public class Events {
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public Event getEvent(@PathVariable int id) {
+		return new Event();
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public List<Event> getAllEvents(@PathVariable String name) {
+		
+		return new ArrayList<Event>();
+	}
 }
