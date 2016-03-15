@@ -1,0 +1,2 @@
+db = db.getSiblingDB('league')
+db.events.insert({ "_class" : "com.cric.domain.Event", "version" : NumberLong(0), "ht" : "India", "at" : "Australia", "nm" : "India v/s Australia", "vn" : "India", "dt" : ISODate("2015-10-10T18:43:57.443Z"), "cd" : ISODate("2015-10-10T18:43:57.443Z"), "cb" : "Chirag Goel"})
