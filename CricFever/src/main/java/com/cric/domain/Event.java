@@ -14,18 +14,20 @@ public class Event {
 
     @Id
     private String id;
+    
     @Version
     private long version;
 
     @Field("ht")
-    @NotEmpty(message = "{user.error.username.required}")
+    @NotEmpty(message = "{event.error.ht.required}")
     private String homeTeam;
     
     @Field("at")
-    @NotEmpty(message = "{user.error.username.required}")
+    @NotEmpty(message = "{event.error.at.required}")
     private String awayTeam;
 
-    @NotEmpty(message = "{user.error.name.required}")
+    @Field("nm")
+    @NotEmpty(message = "{event.error.name.required}")
     @Indexed
     private String name;
     
