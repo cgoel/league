@@ -22,11 +22,18 @@ public class EventResource {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public Event getEvent(@PathVariable String id) {
 		return eventService.getEvent(id);
+		getEvent
+			getEvent
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public List<Event> getAllEvents(@PathVariable String name) {
 		return eventService.getEvents();
+		getEvent
+			
+			getEvent
+			getEvent
+			getEvent
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT)
